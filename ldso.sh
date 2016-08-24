@@ -73,11 +73,10 @@ die()
 quote()
 {
     print "$1" | { # Credit: http://www.etalabs.net/sh_tricks.html
-        set --                         # String may have newlines
-        set -- "$@" -e "s/'/'\\\\''/g" # Quote all single quotes
-        set -- "$@" -e "1s/^/'/"       # Begin with single quote
-        set -- "$@" -e "\$s/\$/'/"     # End with single quote
-        sed "$@"
+        # Aggregate all the lines of that comprise the argument
+        # Finally, quote every single quote, then use a single
+        # quote to delimit the argument at both ends.
+        sed -n -e "H;\${g;s,','\\\\'',g;s,\\n\(.*\\),'\\1',;p;}"
     }
 }
 
